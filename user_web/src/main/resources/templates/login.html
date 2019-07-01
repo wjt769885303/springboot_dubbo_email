@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+
+        <table>
+            <tr><td>用户名：</td><td><input type="text" id="username" ></td></tr>
+            <tr><td>密码：</td><td><input type="password" id="password" ></td></tr>
+            <tr ><td th:colspan="2"><a id="loginByUser">登录</a></td></tr>
+            <tr ><td th:colspan="2"><a href="/backPage">找回密码</a></td></tr>
+        </table>
+
+</body>
+
+<script type="text/javascript"   th:src="@{/js/jquery.js}"></script>
+<script type="text/javascript">
+
+
+
+    var flag=[false,false];
+
+    $("#username").blur(function () {
+        var valus1=$("#username").val().trim();
+        if (valus1==null||valus1==""){
+            alert("账号不能为空");
+            flag[0]=false;
+          return
+        }
+        flag[0]=true;
+    });
+
+    $("#password").blur(function () {
+        var valus2=$("#password").val().trim();
+        if (valus2==null||valus2==""){
+            alert("密码不能为空");
+            flag[1]=false;
+            return
+        }
+        flag[1]=true;
+    });
+
+
+    $("#loginByUser").click(function () {
+
+        $("#password").trigger("blur");
+        $("#username").trigger("blur");
+
+
+        for (var i=0;i<flag.length;i++){
+            if (flag[i]==false){
+                return
+            }
+        }
+
+
+        $.ajax({
+            url:"/loginByUser",
+            type:"POST",
+            data:{
+                "username":$("#username").val(),
+                "password":$("#password").val()
+
+            },
+            success:function (msg) {
+                if (msg==1){
+                    alert("登录成功")
+                }
+                if (msg==2){
+                    alert("账户名或密码错误")
+                }
+
+
+
+            },
+            error:function (msg) {
+                alert("登录失败")
+            }
+
+        })
+
+
+    })
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+
+
+    <form id="fors" >
+        用户名：<input type="text" name="username" id="username"><BR>
+        密码：<input type="text" name="password" id="password"><BR>
+        昵称：<input type="text" name="petname" id="petname"><BR>
+        邮箱：<input type="text" name="email" id="email"><input type="button" id="test" value="获取验证码"><BR>
+
+        验证码：<input type="text" name="emailcode" id="emailcode"><BR>
+
+    </form>
+    <button type="button" id="submits">注册</button>
+</body>
+<script type="text/javascript"   th:src="@{/js/jquery.js}"></script>
+<script type="text/javascript">
+
+
+   $(function(){
+
+       var flag=[false,false,false,false,false];
+
+
+       $("#email").blur(function() {
+
+           //Email正则
+           var ePattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+           var emailvalue=$("#email").val().trim();
+           var s=ePattern.test(emailvalue);
+           if (emailvalue==null||emailvalue==""){
+               alert("邮箱不能为空");
+               flag[0]=false;
+               return;
+           }
+           if (s==false) {
+               alert("邮箱不正确");
+               flag[0]=false;
+               return;
+           }
+           flag[0]=true;
+
+
+
+       });
+
+
+
+       $("#test").click(function(){
+
+
+           if (flag[0]==true) {
+
+               $.ajax({
+
+                   url: '/sendEmail?email=' + $("#email").val(),
+                   // data:{
+                   //
+                   // },
+                   type: 'post',
+                   dataType: 'json',
+                   success: function (msg) {
+
+
+                       alert("获取验证码成功")
+
+                   },
+                   error: function (msg) {
+                       alert("获取验证码失败")
+
+                   }
+               });
+           }
+
+       });
+
+
+
+       $("#username").blur(function () {
+
+           var valus= $("#username").val().trim();
+           if (valus==null||valus==""){
+               alert("账号不能为空");
+               flag[1]=false;
+               return
+           }
+           flag[1]=true;
+       });
+
+
+
+       $("#password").blur(function () {
+
+           var valus= $("#password").val().trim();
+           if (valus==null||valus==""){
+               alert("密码不能为空");
+               flag[2]=false;
+               return
+           }
+           flag[2]=true;
+       });
+
+
+       $("#petname").blur(function () {
+
+           var valus= $("#petname").val().trim();
+           if (valus==null||valus==""){
+               alert("昵称不能为空");
+               flag[3]=false;
+               return
+           }
+           flag[3]=true;
+       });
+
+
+       $("#emailcode").blur(function () {
+
+           var valus= $("#emailcode").val().trim();
+           if (valus==null||valus==""){
+               alert("验证码不能为空");
+               flag[4]=false;
+               return
+           }
+           flag[4]=true;
+       });
+
+
+
+
+      $("#submits").click(function () {
+          $("#email").trigger("blur");
+          $("#username").trigger("blur");
+          $("#password").trigger("blur");
+          $("#petname").trigger("blur");
+          $("#emailcode").trigger("blur");
+
+
+          for(var i=0;i<flag.length;i++){
+              if (flag[i]==false){
+                  alert("请重新输入");
+                  return
+              }
+          }
+                  $.ajax({
+                      url:"/Registor",
+                      type:"POST",
+                      data:$("#fors").serialize(),
+                      success:function (msg) {
+
+                          if(msg==0){
+                              alert("用户名已存在,请重新注册");
+                          }
+                          if(msg==1){
+                              alert("验证码不正确");
+                          }
+                          if (msg==2){
+                              location.href="/login"
+                          }
+
+                      },
+                      error:function (msg) {
+                          alert("注册出错")
+                      }
+
+                  })
+
+
+
+
+
+      });
+
+   })
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>
